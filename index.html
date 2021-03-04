@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport">
+  <title>Document</title>
+</head>
+<body>
+  <tic-tac-toe-board></tic-tac-toe-board>
+  <template id="board-template">
+    <style>
+       #board {
+        width: 540px;
+        height: 540px;
+        padding: 20px;
+        background: rgb(229, 214, 194);
+        display: flex;
+        flex-wrap: wrap;
+        align-content: space-between;
+        justify-content: space-between;
+      }
+    </style>
+    <div id="board"></div>
+  </template>
+  
+  <template id="box-template">
+    <style>
+      #box {
+        width: 175px;
+        height: 175px;
+        background: rgb(254, 254, 240);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .circle {
+        background: transparent;
+        border: 10px solid rgb(184, 64, 57);
+        width: 75px;
+        height: 70px;
+        border-radius: 50%;
+      }
+      .cross {
+        background:  rgb(71, 69, 78);
+        height: 100px;
+        position: relative;
+        width: 10px;
+        transform: rotate(45deg);
+        border-radius: 30px;
+      }
+      
+      .cross:after {
+        background:  rgb(71, 69, 78);
+        content: "";
+        height: 10px;
+        left: -45px;
+        position: absolute;
+        top: 45px;
+        width: 100px;
+        border-radius: 30px;
+      }
+    </style>
+    <div id="box"></div>
+  </template>
+ 
+  <template id="cross-template">
+    <style>
+      :host {
+        background:  rgb(71, 69, 78);
+        height: 100px;
+        position: relative;
+        width: 10px;
+        transform: rotate(45deg);
+        border-radius: 30px;
+      }
+      
+      :host:after {
+        background:  rgb(71, 69, 78);
+        content: "";
+        height: 10px;
+        left: -45px;
+        position: absolute;
+        top: 45px;
+        width: 100px;
+        border-radius: 30px;
+      }
+    </style>
+  </template>
+  
+  <template id="circle-template">
+    <style>
+     :host {
+        background: transparent;
+        border: 10px solid rgb(184, 64, 57);
+        width: 75px;
+        height: 70px;
+        border-radius: 50%;
+      }
+    </style>
+  </template>
+ 
+  <script>
+    class TicTacToeBoard extends HTMLElement {
+
+      board = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ];
+
+      turn = 1;
+      constructor() {
+        super();
+        const template = document.getElementById('board-template');
+        this.attachShadow({ mode: 'open' });
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        for (let i = 0; i < this.board.length; i++) {
+          for (let j = 0; j < this.board[i].length; j++) {
+            const newBox = document.createElement('tic-tac-toe-box');
+            this.shadowRoot.getElementById('board').appendChild(newBox);
+          }
+        }
+      }
+    }
+    
+    class TicTacToeBox extends HTMLElement {
+
+      static get observedAttributes() {
+        return ['symbol'];
+      }
+
+      constructor() {
+        super();
+        const template = document.getElementById('box-template');
+        this.attachShadow({ mode: 'open' });
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+      }
+
+      attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'symbol' && oldValue === null) {
+          const nameSymbol = newValue;
+          const div = document.createElement('div');
+          div.setAttribute('class', nameSymbol);
+          this.shadowRoot.getElementById('box').appendChild(div);
+        }
+      }
+    }
+
+    class TicTacToeCross extends HTMLElement {
+      constructor() {
+        super();
+        const template = document.getElementById('cross-template');
+        this.attachShadow({ mode: 'open' });
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+      }
+    }
+    
+    class TicTacToeCircle extends HTMLElement {
+      constructor() {
+        super();
+        const template = document.getElementById('circle-template');
+        this.attachShadow({ mode: 'open' });
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+      }
+    }
+    
+    window.customElements.define('tic-tac-toe-board', TicTacToeBoard);
+    window.customElements.define('tic-tac-toe-box', TicTacToeBox);
+    window.customElements.define('tic-tac-toe-cross', TicTacToeCross);
+    window.customElements.define('tic-tac-toe-circle', TicTacToeCircle);
+  </script>
+</body>
+</html>
