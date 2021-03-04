@@ -34,33 +34,6 @@
         align-items: center;
         justify-content: center;
       }
-
-      .circle {
-        background: transparent;
-        border: 10px solid rgb(184, 64, 57);
-        width: 75px;
-        height: 70px;
-        border-radius: 50%;
-      }
-      .cross {
-        background:  rgb(71, 69, 78);
-        height: 100px;
-        position: relative;
-        width: 10px;
-        transform: rotate(45deg);
-        border-radius: 30px;
-      }
-      
-      .cross:after {
-        background:  rgb(71, 69, 78);
-        content: "";
-        height: 10px;
-        left: -45px;
-        position: absolute;
-        top: 45px;
-        width: 100px;
-        border-radius: 30px;
-      }
     </style>
     <div id="box"></div>
   </template>
@@ -141,9 +114,8 @@
       attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'symbol' && oldValue === null) {
           const nameSymbol = newValue;
-          const div = document.createElement('div');
-          div.setAttribute('class', nameSymbol);
-          this.shadowRoot.getElementById('box').appendChild(div);
+          const symbol = document.createElement(`${newValue}-symbol`);
+          this.shadowRoot.getElementById('box').appendChild(symbol);
         }
       }
     }
@@ -168,8 +140,8 @@
     
     window.customElements.define('tic-tac-toe-board', TicTacToeBoard);
     window.customElements.define('tic-tac-toe-box', TicTacToeBox);
-    window.customElements.define('tic-tac-toe-cross', TicTacToeCross);
-    window.customElements.define('tic-tac-toe-circle', TicTacToeCircle);
+    window.customElements.define('cross-symbol', TicTacToeCross);
+    window.customElements.define('circle-symbol', TicTacToeCircle);
   </script>
 </body>
 </html>
