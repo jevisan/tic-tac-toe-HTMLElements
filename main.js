@@ -2,18 +2,15 @@ const html = String.raw;
 
 class TicTacToeBoard extends HTMLElement {
 
-  board = [
-    [0, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0]
-  ];
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.initGame();
+  }
 
-  turn = 1;
-  currentPlayer = 1;
-  plays = {1: 0, 2: 0};
-
-  TEMPLATE = html`
-    <style>
+  getTemplate() {
+    return html`
+      <style>
         #board {
           width: 540px;
           height: 540px;
@@ -26,12 +23,7 @@ class TicTacToeBoard extends HTMLElement {
         }
       </style>
       <div id="board"></div>
-  `
-
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-    this.initGame();
+    `;
   }
 
   changePlayer() {
@@ -51,7 +43,8 @@ class TicTacToeBoard extends HTMLElement {
   
     this.turn = 1;
     this.currentPlayer = 1;
-    this.shadowRoot.innerHTML = this.TEMPLATE;
+    this.plays = {1: 0, 2: 0};
+    this.shadowRoot.innerHTML = this.getTemplate();
     for (let i = 0; i < this.board.length; i++) {
       for (let j = 0; j < this.board[i].length; j++) {
         const newBox = document.createElement('tic-tac-toe-box');
@@ -64,10 +57,15 @@ class TicTacToeBoard extends HTMLElement {
           this.board[i][j] = this.currentPlayer;
           this.plays[this.currentPlayer]++;
           if (checkVictory(this.board, this.currentPlayer)) {
-            setTimeout(() => {
-              confirm(`FELICIDADES, HA GANADO EL JUGADOR ${this.currentPlayer} en ${this.plays[this.currentPlayer]} movimientos`);
-              this.initGame();
-            }, 100);
+            const winEvent = new CustomEvent('player-win', {
+              detail: {
+                player: this.currentPlayer
+              }
+            });
+            this.dispatchEvent(winEvent);
+          } else if (this.plays[1] + this.plays[2] === 9) {
+            const tieEvent = new CustomEvent('tie');
+            this.dispatchEvent(tieEvent);
           } else {
             this.turn++;
             this.changePlayer();
@@ -85,20 +83,6 @@ class TicTacToeBoard extends HTMLElement {
 
 class TicTacToeBox extends HTMLElement {
 
-  TEMPLATE = html`
-    <style>
-      #box {
-        width: 175px;
-        height: 175px;
-        background: rgb(254, 254, 240);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    </style>
-    <div id="box"></div>
-  `
-
   static get observedAttributes() {
     return ['symbol'];
   }
@@ -106,7 +90,23 @@ class TicTacToeBox extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.innerHTML = this.TEMPLATE;
+    this.shadowRoot.innerHTML = this.getTemplate();
+  }
+
+  getTemplate() {
+    return html`
+      <style>
+        #box {
+          width: 175px;
+          height: 175px;
+          background: rgb(254, 254, 240);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      </style>
+      <div id="box"></div>
+    `;
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -120,52 +120,58 @@ class TicTacToeBox extends HTMLElement {
 
 class TicTacToeCross extends HTMLElement {
 
-  TEMPLATE = html`
-    <style>
-      :host {
-        background:  rgb(71, 69, 78);
-        height: 100px;
-        position: relative;
-        width: 10px;
-        transform: rotate(45deg);
-        border-radius: 30px;
-      }
-      
-      :host:after {
-        background:  rgb(71, 69, 78);
-        content: "";
-        height: 10px;
-        left: -45px;
-        position: absolute;
-        top: 45px;
-        width: 100px;
-        border-radius: 30px;
-      }
-    </style>
-  `
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.innerHTML = this.TEMPLATE;
+    this.shadowRoot.innerHTML = this.getTemplate();
+  }
+
+  getTemplate() {
+    return html`
+      <style>
+        :host {
+          background:  rgb(71, 69, 78);
+          height: 100px;
+          position: relative;
+          width: 10px;
+          transform: rotate(45deg);
+          border-radius: 30px;
+        }
+        
+        :host:after {
+          background:  rgb(71, 69, 78);
+          content: "";
+          height: 10px;
+          left: -45px;
+          position: absolute;
+          top: 45px;
+          width: 100px;
+          border-radius: 30px;
+        }
+      </style>
+    `;
   }
 }
 
 class TicTacToeCircle extends HTMLElement {
-  TEMPLATE = html`
-    <style>
-      :host {
-        background: transparent;
-        border: 10px solid rgb(184, 64, 57);
-        width: 75px;
-        height: 70px;
-        border-radius: 50%;
-      }
-    </style>
-  `
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.innerHTML = this.TEMPLATE;
+    this.shadowRoot.innerHTML = this.getTemplate();
+  }
+
+  getTemplate() {
+    return html`
+      <style>
+        :host {
+          background: transparent;
+          border: 10px solid rgb(184, 64, 57);
+          width: 75px;
+          height: 70px;
+          border-radius: 50%;
+        }
+      </style>
+    `;
   }
 }
 
