@@ -10,6 +10,7 @@ class TicTacToeBoard extends HTMLElement {
 
   turn = 1;
   currentPlayer = 1;
+  plays = {1: 0, 2: 0};
 
   TEMPLATE = html`
     <style>
@@ -30,6 +31,26 @@ class TicTacToeBoard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.initGame();
+  }
+
+  changePlayer() {
+    if (this.currentPlayer == 1) {
+      this.currentPlayer = 2
+    } else {
+      this.currentPlayer = 1;
+    }
+  }
+
+  initGame() {
+    this.board = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ];
+  
+    this.turn = 1;
+    this.currentPlayer = 1;
     this.shadowRoot.innerHTML = this.TEMPLATE;
     for (let i = 0; i < this.board.length; i++) {
       for (let j = 0; j < this.board[i].length; j++) {
@@ -41,8 +62,12 @@ class TicTacToeBoard extends HTMLElement {
             newBox.setAttribute('symbol', 'circle');
           }
           this.board[i][j] = this.currentPlayer;
+          this.plays[this.currentPlayer]++;
           if (checkVictory(this.board, this.currentPlayer)) {
-            confirm(`FELICIDADES, HA GANADO EL JUGADOR ${this.currentPlayer}`);
+            setTimeout(() => {
+              confirm(`FELICIDADES, HA GANADO EL JUGADOR ${this.currentPlayer} en ${this.plays[this.currentPlayer]} movimientos`);
+              this.initGame();
+            }, 100);
           } else {
             this.turn++;
             this.changePlayer();
@@ -53,12 +78,8 @@ class TicTacToeBoard extends HTMLElement {
     }
   }
 
-  changePlayer() {
-    if (this.currentPlayer == 1) {
-      this.currentPlayer = 2
-    } else {
-      this.currentPlayer = 1;
-    }
+  reset() {
+    
   }
 }
 
